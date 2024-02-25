@@ -6,73 +6,34 @@ class MVue {
         this.$options = options;
         // 如果这个根元素存在则开始编译模板
         if (this.$el) {
-            // 1.实现一个指令解析器compile
-            new Compile(this.$el, this)
-            new Observer(this.$data)
+            // 1.实现一个数据监听器Observe
+            // 能够对数据对象的所有属性进行监听，如有变动可拿到最新值并通知订阅者
+            // Object.definerProperty()来定义
+            new Observer(this.$data);
+
+            // 把数据获取操作 vm上的取值操作 都代理到vm.$data上
+            this.proxyData(this.$data);
+
+            // 2.实现一个指令解析器Compile
+            new Compile(this.$el, this);
+
         }
     }
-}
-const compileUtil = {
-    // 获取值的方法
-    getVal(expr, vm) {
-        return expr.split('.').reduce((data, currentVal) => {
-            return data[currentVal]
-        }, vm.$data)
-    },
-    getAttrs(expr, vm) {
-
-    },
-    text(node, expr, vm) { //expr 可能是 {{obj.name}}--{{obj.age}} 
-        let val;
-        if (expr.indexOf('{{') !== -1) {
-            // 
-            val = expr.replace(/\{\{(.+?)\}\}/g, (...args) => {
-                return this.getVal(args[1], vm);
+    // 做个代理
+    proxyData(data) {
+        for (const key in data) {
+            Object.defineProperty(this, key, {
+                get() {
+                    return data[key];
+                },
+                set(newVal) {
+                    data[key] = newVal;
+                }
             })
-        } else { //也可能是v-text='obj.name' v-text='msg'
-            val = this.getVal(expr, vm);
-        }
-        this.updater.textUpdater(node, val);
-    },
-    html(node, expr, vm) {
-        // html处理 非常简单 直接取值 然后调用更新函数即可
-        let val = this.getVal(expr, vm);
-        this.updater.htmlUpdater(node, val);
-    },
-    model(node, expr, vm) {
-        const val = this.getVal(expr, vm);
-        this.updater.modelUpdater(node, val);
-    },
-    // 对事件进行处理
-    on(node, expr, vm, eventName) {
-        // 获取事件函数
-        let fn = vm.$options.methods && vm.$options.methods[expr];
-        // 添加事件 因为我们使用vue时 都不需要关心this的指向问题,这是因为源码的内部帮咱们处理了this的指向
-        node.addEventListener(eventName, fn.bind(vm), false);
-    },
-    // 绑定属性 简单的属性 已经处理 类名样式的绑定有点复杂 因为对应的值可能是对象 也可能是数组 大家根据个人能力尝试写一下
-    bind(node, expr, vm, attrName) {
-        let attrVal = this.getVal(expr, vm);
-        this.updater.attrUpdater(node, attrName, attrVal);
-    },
-    updater: {
-        attrUpdater(node, attrName, attrVal) {
-            node.setAttribute(attrName, attrVal);
-        },
-        modelUpdater(node, value) {
-            node.value = value;
-        },
-        textUpdater(node, value) {
-
-            node.textContent = value;
-
-        },
-        htmlUpdater(node, value) {
-            node.innerHTML = value;
         }
     }
-
 }
+
 
 // 编译数据的类
 class Compile {
