@@ -1,3 +1,4 @@
+
 class MVue {
     constructor(options) {
         this.$el = options.el;
@@ -38,6 +39,8 @@ class MVue {
 // 编译数据的类
 class Compile {
     constructor(el, vm) {
+        //编译过程中，绑定watch
+        console.log('开始编译',Dep.target);
         // 判断el参数是否是一个元素节点,如果是直接赋值,如果不是 则获取赋值
         this.el = this.isElementNode(el) ? el : document.querySelector(el);
         this.vm = vm;

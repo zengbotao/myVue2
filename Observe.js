@@ -114,12 +114,13 @@ class Watcher {
         this.expr = expr;
         this.cb = cb;
         // 先把旧值存起来  
+        //构造函数在new Watch的时候会比较值
         this.oldVal = this.getOldVal();
     }
     getOldVal() {
         Dep.target = this;
         let oldVal = compileUtil.getVal(this.expr, this.vm);
-        Dep.target = null; //很关键，把旧的watch销毁掉
+        Dep.target = null; //很关键，把旧的watch绑定的对象销毁掉
         return oldVal;
     }
     update() {
@@ -151,10 +152,13 @@ class Observer {
     defineReactive(obj, key, value) {
         // 循环递归 对所有层的数据进行观察
         this.observe(value);//这样obj也能被观察了
-        const dep = new Dep();
+        const dep = new Dep(Dep.target);
+        //是compile后才会存在Dep.target
+        console.log(value,Dep.target,'Detarget')
         Object.defineProperty(obj, key, {
             get() {
                 //订阅数据变化,往Dep中添加观察者
+                console.log(Dep.target, 'Dep.target')
                 Dep.target && dep.addSub(Dep.target);
                 return value;
             },
@@ -164,6 +168,7 @@ class Observer {
                     this.observe(newVal);
                     value = newVal;
                     // 通知变化
+                    console.log(Dep.target, 'notify')
                     dep.notify();
                 }
             }
