@@ -149,6 +149,15 @@ class Observer {
 
         }
     }
+    //
+    // 数据修改时，因为初始化已经对数据做了响应式处理，所以当修改数据时，
+    // 首先会走observer中的get方法，由于初始化已经对该数据进行监听，
+    // 添加了watcher，并且此时Dep.target为null，所以不会再次收集订阅者信息，
+    // 而是去通知视图进行更新，走了set中的notify，
+    // notify去通知所有的watcher去执行update方法
+
+
+
     defineReactive(obj, key, value) {
         // 循环递归 对所有层的数据进行观察
         this.observe(value);//这样obj也能被观察了

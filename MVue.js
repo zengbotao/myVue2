@@ -48,9 +48,10 @@ class Compile {
         // 所以需要创建文档碎片来进行缓存,减少页面的回流和重绘
         // 1.获取文档碎片对象
         const fragment = this.node2Fragment(this.el);
-        // console.log(fragment);
+        console.log(fragment.childNodes.attributes);
         // 2.编译模板
         this.compile(fragment)
+        console.log(fragment.childNodes.attributes);
 
         // 3.把子元素的所有内容添加到根元素中
         this.el.appendChild(fragment);
@@ -59,6 +60,7 @@ class Compile {
     compile(fragment) {
         // 1.获取子节点
         const childNodes = fragment.childNodes;
+        console.log(childNodes);
         // 2.遍历子节点
         [...childNodes].forEach(child => {
 
@@ -95,8 +97,10 @@ class Compile {
     compileElement(node) {
         // 获取该节点的所有属性
         const attributes = node.attributes;
+        console.log(attributes,[...attributes],'attributes');
         // 对属性进行遍历
         [...attributes].forEach(attr => {
+            console.log(attr);
             const { name, value } = attr; //v-text v-model   v-on:click  @click 
             // 看当前name是否是一个指令
             if (this.isDirective(name)) {
