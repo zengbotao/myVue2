@@ -1,6 +1,6 @@
 // 编译模板工具类
 const compileUtil = {
-    // 获取值的方法
+    // 获取值的方法 会触发Observe.js中的get
     getVal(expr, vm) {
         return expr.split('.').reduce((data, currentVal) => {
             return data[currentVal]
@@ -119,7 +119,7 @@ class Watcher {
     }
     getOldVal() {
         Dep.target = this;
-        let oldVal = compileUtil.getVal(this.expr, this.vm);
+        let oldVal = compileUtil.getVal(this.expr, this.vm);//会触发Observe.js中的get，使得Dep获取到
         Dep.target = null; //很关键，把旧的watch绑定的对象销毁掉
         return oldVal;
     }

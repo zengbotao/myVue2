@@ -38,5 +38,11 @@ setSample.forEach(it=>console.log(it))
 // Array.prototype.indexOf()
 // Array.prototype.includes()
 // Array.prototype.find()
+// console.log([1,1,3,5].find(it=>it===3));
 
-console.log([1,1,3,5].find(it=>it===3));
+// Array.prototype.join()
+// Array.prototype.some()
+// Array.prototype.every()//return true/false
+// Array.prototype.forEach()
+// Array.prototype.filter()
+// Array.prototype.map()

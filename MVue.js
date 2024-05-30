@@ -48,10 +48,9 @@ class Compile {
         // 所以需要创建文档碎片来进行缓存,减少页面的回流和重绘
         // 1.获取文档碎片对象
         const fragment = this.node2Fragment(this.el);
-        console.log(fragment.childNodes.attributes);
+        console.log(fragment);
         // 2.编译模板
         this.compile(fragment)
-        console.log(fragment.childNodes.attributes);
 
         // 3.把子元素的所有内容添加到根元素中
         this.el.appendChild(fragment);

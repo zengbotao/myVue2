@@ -5,43 +5,7 @@
  * @LastEditors: Please set LastEditors
  * @LastEditTime: 2024-02-27 09:50:08
  */
-// 实现 new ，成为三部分
-// 创建一个新的对象 obj
-// 将对象与构建函数通过原型链连接起来
-// 将构建函数中的 this 绑定到新建的对象 obj上
 
-const { prototype } = require("events");
-
-// 根据构建函数返回类型作判断，如果是原始值则被忽略，如果是返回对象，需要正常处理
-function myNew(fn, ...args) {
-  let obj = {};
-  obj.__proto__ = fn.prototype;
-  let result = fn.apply(obj, args);
-  return result instanceof Object ? result : obj;
-}
-
-// 实现 bind ，成为三部分
-// 修改 this 指向
-// 动态传递参数
-// 兼容 new 关键字
-Function.prototype.myBind = function (context) {
-  // 判断调用对象是否为函数
-  if (typeof this !== "function") {
-    throw new TypeError("Error");
-  }
-  // 获取参数
-  const args = [...arguments].slice(1); //函数参数
-
-  console.log(args.concat(...arguments), "args.concat(...arguments)");
-  let fn = this; //函数  修改 this 指向
-  return function Fn() {
-    // 根据调用方式，传入不同绑定值
-    return fn.apply(
-      this instanceof Fn ? new fn(...arguments) : context, //修改this指向
-      args.concat(...arguments) //新的参数
-    );
-  };
-};
 
 function isElementNode(el = {}) {
   console.log(el, "gg");
